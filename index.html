@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>jsZip</title>
+        <link rel="stylesheet" href="generator.css">
+    </head>
+    <body>
+        <button onclick="test()">Generate PDF</button>
+        <button onclick="downloadZip()">download Zip</button>
+    	<div id="root"></div>
+    	<div id="container"></div>
+        <script src="./es6-promise.auto.js"></script>
+        <script src="./jspdf.debug.js"></script>
+        <script src="html2canvas.js"></script>
+        <script src="html2pdf.js"></script>
+        <script type="text/javascript" src="./jszip.js"></script>
+        <script type="text/javascript" src="./FileSaver.js"></script>
+        <script type="text/javascript" src="./qrcode.js"></script>
+        <script type="text/javascript" src="./qrcode.min.js"></script>
+        <script type="text/javascript" src="./util.js"></script>
+        <script type="text/javascript" src="./juhe.js"></script>
+        <script type="text/javascript" src="./luanxu.js"></script>
+        <!-- <script type="text/javascript" src="./html2pdf.bundle.js"></script> -->
+    	<script type="text/javascript" src="./jquery.min.js"></script>
+        <script type="text/javascript" src='generator.js'></script>
+        <script type="text/javascript">
+            // window.print.init(JUHE);
+            window.print.init(LUANXU);
+            window.test = function() {
+               var element = document.querySelectorAll('body > div')[1];
+               html2pdf().from(element).set({
+                   filename: 'test.pdf',
+                   html2canvas: { scale: 2},
+                   jsPDF: {
+                       orientation: 'portrait',
+                       unit: 'in',
+                       format: 'a4'
+                   }
+               }).save();
+            }
+            var zip = new JSZip();
+            window.downloadZip = function() {
+                Promise.all([fetch('./1.pdf'), fetch('./2.pdf'), fetch('./3.pdf')]).then((res) => {
+                    console.log(res);
+                    res.forEach((item) => {
+                        // console.log(item.url.substring(item.url.lastIndexOf('\/')));
+                        zip.file(item.url.substring(item.url.lastIndexOf('\/') + 1), item.blob());
+                    });
+                    zip.generateAsync({ type: "blob" }).then(function (content) {
+                        saveAs(content, "example.zip");
+                    });
+                })
+            }
+        </script>
+    </body>
+</html>
